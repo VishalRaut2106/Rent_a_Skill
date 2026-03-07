@@ -8,7 +8,7 @@ A modern marketplace platform that connects people who need help with tasks to v
 - **Task Management** - Post, browse, and manage tasks
 - **Payment Integration** - Secure payments with Razorpay
 - **Skill Matching** - Find experts based on skills and ratings
-- **Real-time Communication** - Chat between seekers and providers
+- **Real-time Communication** - Chat between seekers and providers (Coming Soon)
 - **Dashboard** - Comprehensive user dashboard with analytics
 
 ## 🛠️ Tech Stack
@@ -20,6 +20,7 @@ A modern marketplace platform that connects people who need help with tasks to v
 - **Authentication**: Supabase Auth
 - **Payments**: Razorpay
 - **Icons**: Lucide React
+- **Notifications**: Sonner
 
 ## 📋 Prerequisites
 
@@ -33,8 +34,8 @@ A modern marketplace platform that connects people who need help with tasks to v
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd rent-a-skill-landing
+git clone https://github.com/KhairnarLokesh/Rent_a_Skill.git
+cd Rent_a_Skill
 ```
 
 ### 2. Install Dependencies
@@ -47,7 +48,7 @@ pnpm install
 
 ### 3. Environment Variables
 
-Create a `.env.local` file in the root directory with the following variables:
+Create a `.env.local` file in the root directory with your Supabase and Razorpay credentials. Refer to the `.env.example` (if available) or the instructions below:
 
 ```env
 # Supabase Configuration
