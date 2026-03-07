@@ -8,10 +8,10 @@ import { useDatabase } from "../hooks/useDatabase.js"
 import { ProfileTypes } from "../types/index.js"
 import { Search, Star, Clock, Shield, Mic } from "lucide-react"
 
-export default function SkillBrowser() {
-  const [searchQuery, setSearchQuery] = useState("")
+export default function SkillBrowser({ initialSearchQuery = "" }) {
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery)
   const [selectedCategory, setSelectedCategory] = useState("")
-  const [maxPrice, setMaxPrice] = useState([500])
+  const [maxPrice, setMaxPrice] = useState([1000]) // Increased default max price
   const [isVoiceSearch, setIsVoiceSearch] = useState(false)
 
   const { searchProviders, searchSkills, skills } = useDatabase() // Changed skills to searchSkills
@@ -109,9 +109,8 @@ export default function SkillBrowser() {
             />
             <Button
               size="sm"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 p-0 ${
-                isVoiceSearch ? "bg-red-500 animate-pulse" : "bg-purple-500"
-              }`}
+              className={`absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 p-0 ${isVoiceSearch ? "bg-red-500 animate-pulse" : "bg-purple-500"
+                }`}
               onClick={handleVoiceSearch}
             >
               <Mic className="w-4 h-4" />

@@ -27,7 +27,13 @@ import {
   GraduationCap,
   Briefcase,
   BookOpen,
+  Moon,
+  Sun,
+  Mail,
+  Send,
 } from "lucide-react"
+import { toast } from "sonner"
+import { useTheme } from "next-themes"
 
 // Wrap the component with AuthProvider
 export default function Page() {
@@ -46,8 +52,17 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState("home")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
+  const [heroSearch, setHeroSearch] = useState("")
+  const [email, setEmail] = useState("")
 
   const { user, logout } = useAuth()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Load Razorpay script
   useEffect(() => {
@@ -146,6 +161,27 @@ function AppContent() {
     },
   ]
 
+  const testimonials = [
+    {
+      name: "Sahil Kumar",
+      role: "Engineering Student",
+      content: "Found a pro who helped me debug my React project in under an hour. Saved my submission!",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sahil",
+    },
+    {
+      name: "Priya Singh",
+      role: "Product Designer",
+      content: "As a professional, I've earned over ₹15,000 this month just by sharing my design feedback.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
+    },
+    {
+      name: "Rahul Verma",
+      role: "Tech Recruiter",
+      content: "The resume review service is top-notch. I got matched with a senior dev who gave amazing tips.",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul",
+    },
+  ]
+
   if (user && activeTab !== "home") {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -182,79 +218,41 @@ function AppContent() {
                 </button>
               </nav>
 
-              <div className="flex items-center space-x-4">
-                <Button
-                  onClick={() => setTaskModalOpen(true)}
-                  className="bg-purple-600 hover:bg-purple-700 hidden sm:flex"
-                >
-                  Post Task
-                </Button>
-                <div className="flex items-center space-x-2">
-                  <img src={user.avatar_url || "/placeholder.svg"} alt={user.name} className="w-8 h-8 rounded-full" />
-                  <span className="hidden sm:block text-sm font-medium">{user.name}</span>
-                </div>
-                <Button variant="ghost" onClick={logout} className="text-gray-600">
-                  Logout
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="md:hidden"
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                >
-                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 dark:text-gray-300"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                {mounted && (theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />)}
+              </Button>
+              <Button
+                onClick={() => setTaskModalOpen(true)}
+                className="bg-purple-600 hover:bg-purple-700 hidden sm:flex"
+              >
+                Post Task
+              </Button>
+              <div className="flex items-center space-x-2">
+                <img src={user.avatar_url || "/placeholder.svg"} alt={user.name} className="w-8 h-8 rounded-full" />
+                <span className="hidden sm:block text-sm font-medium">{user.name}</span>
               </div>
+              <Button variant="ghost" onClick={logout} className="text-gray-600">
+                Logout
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
             </div>
-
-            {/* Mobile Menu */}
-            {mobileMenuOpen && (
-              <div className="md:hidden border-t bg-white py-4">
-                <nav className="flex flex-col space-y-4">
-                  <button
-                    onClick={() => {
-                      setActiveTab("home")
-                      setMobileMenuOpen(false)
-                    }}
-                    className="text-left text-gray-600 hover:text-purple-600"
-                  >
-                    Home
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab("browse")
-                      setMobileMenuOpen(false)
-                    }}
-                    className="text-left text-gray-600 hover:text-purple-600"
-                  >
-                    Browse Skills
-                  </button>
-                  <button
-                    onClick={() => {
-                      setActiveTab("dashboard")
-                      setMobileMenuOpen(false)
-                    }}
-                    className="text-left text-gray-600 hover:text-purple-600"
-                  >
-                    Dashboard
-                  </button>
-                  <Button
-                    onClick={() => {
-                      setTaskModalOpen(true)
-                      setMobileMenuOpen(false)
-                    }}
-                    className="bg-purple-600 hover:bg-purple-700 w-full"
-                  >
-                    Post Task
-                  </Button>
-                </nav>
-              </div>
-            )}
           </div>
         </header>
 
         {/* Content */}
-        {activeTab === "browse" && <SkillBrowser />}
+        {activeTab === "browse" && <SkillBrowser initialSearchQuery={heroSearch} />}
         {activeTab === "dashboard" && <EnhancedDashboard />}
 
         {/* Modals */}
@@ -290,6 +288,14 @@ function AppContent() {
               </a>
             </nav>
             <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 dark:text-gray-300"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                {mounted && (theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />)}
+              </Button>
               {user ? (
                 <>
                   <div className="flex items-center space-x-2">
@@ -334,11 +340,6 @@ function AppContent() {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-purple-600 via-purple-700 to-pink-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 text-center">
-            <Badge className="bg-yellow-400 text-gray-900 font-semibold">
-              🚧 Updated from feature/my-change branch
-            </Badge>
-          </div>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
@@ -405,13 +406,14 @@ function AppContent() {
                   <div className="relative">
                     <Input
                       placeholder="E.g., 'Need help with React development'"
+                      value={heroSearch}
+                      onChange={(e) => setHeroSearch(e.target.value)}
                       className="bg-white/20 border-white/30 text-white placeholder:text-white/70 pr-12"
                     />
                     <Button
                       size="sm"
-                      className={`absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 p-0 ${
-                        isRecording ? "bg-red-500 animate-pulse" : "bg-purple-500"
-                      }`}
+                      className={`absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 p-0 ${isRecording ? "bg-red-500 animate-pulse" : "bg-purple-500"
+                        }`}
                       onClick={() => setIsRecording(!isRecording)}
                     >
                       <Mic className="w-4 h-4" />
@@ -419,11 +421,23 @@ function AppContent() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <div
+                      className="bg-white/10 rounded-lg p-3 text-center cursor-pointer hover:bg-white/20 transition-colors"
+                      onClick={() => {
+                        setHeroSearch("Coding")
+                        setActiveTab("browse")
+                      }}
+                    >
                       <Code className="w-6 h-6 mx-auto mb-1" />
                       <div className="text-sm">Coding</div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-3 text-center">
+                    <div
+                      className="bg-white/10 rounded-lg p-3 text-center cursor-pointer hover:bg-white/20 transition-colors"
+                      onClick={() => {
+                        setHeroSearch("Design")
+                        setActiveTab("browse")
+                      }}
+                    >
                       <Palette className="w-6 h-6 mx-auto mb-1" />
                       <div className="text-sm">Design</div>
                     </div>
@@ -431,7 +445,13 @@ function AppContent() {
 
                   <Button
                     className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-semibold hover:from-yellow-500 hover:to-orange-600"
-                    onClick={() => (user ? setTaskModalOpen(true) : setAuthModalOpen(true))}
+                    onClick={() => {
+                      if (!user) {
+                        setAuthModalOpen(true)
+                      } else {
+                        setActiveTab("browse")
+                      }
+                    }}
                   >
                     Find Expert Now
                   </Button>
@@ -681,6 +701,75 @@ function AppContent() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-20 bg-purple-50 dark:bg-gray-900 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">What Our Users Say</h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Real stories from people getting work done and earning on Rent-a-Skill
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((t, i) => (
+              <Card key={i} className="border-none shadow-md hover:shadow-lg transition-all dark:bg-gray-800">
+                <CardContent className="p-8">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full" />
+                    <div>
+                      <h4 className="font-bold text-gray-900 dark:text-white">{t.name}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{t.role}</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-300 italic">"{t.content}"</p>
+                  <div className="flex text-yellow-400 mt-4">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-20 bg-white dark:bg-black transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Stay in the Loop</h2>
+            <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+              Get the latest updates on new skills, featured experts, and platform rewards.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <div className="flex-1 relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-300 w-5 h-5" />
+                <Input
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50 pl-10 h-12"
+                />
+              </div>
+              <Button
+                onClick={() => {
+                  if (email) {
+                    toast.success("Thanks for subscribing!")
+                    setEmail("")
+                  } else {
+                    toast.error("Please enter a valid email.")
+                  }
+                }}
+                className="bg-white text-purple-600 hover:bg-gray-100 h-12 px-8 font-bold"
+              >
+                Subscribe
+                <Send className="ml-2 w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -731,7 +820,10 @@ function AppContent() {
                 Connect with verified experts across all skill levels for fast, reliable help.
               </p>
               <div className="flex space-x-4 mt-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <button
+                  onClick={() => toast.info("Social media links coming soon!")}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       fillRule="evenodd"
@@ -739,13 +831,19 @@ function AppContent() {
                       clipRule="evenodd"
                     />
                   </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                </button>
+                <button
+                  onClick={() => toast.info("Social media links coming soon!")}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
                   </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                </button>
+                <button
+                  onClick={() => toast.info("Social media links coming soon!")}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       fillRule="evenodd"
@@ -753,8 +851,11 @@ function AppContent() {
                       clipRule="evenodd"
                     />
                   </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                </button>
+                <button
+                  onClick={() => toast.info("Social media links coming soon!")}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path
                       fillRule="evenodd"
@@ -762,7 +863,7 @@ function AppContent() {
                       clipRule="evenodd"
                     />
                   </svg>
-                </a>
+                </button>
               </div>
             </div>
 

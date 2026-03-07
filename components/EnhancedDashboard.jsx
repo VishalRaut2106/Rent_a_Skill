@@ -22,6 +22,7 @@ import {
   Download,
   CreditCard,
 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function EnhancedDashboard() {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
@@ -281,7 +282,7 @@ export default function EnhancedDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => toast.info("Chat feature is coming soon!")}>
                         <MessageCircle className="w-4 h-4 mr-2" />
                         Chat
                       </Button>
@@ -331,7 +332,7 @@ export default function EnhancedDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => toast.info("Chat feature is coming soon!")}>
                         <MessageCircle className="w-4 h-4 mr-2" />
                         Chat
                       </Button>
