@@ -34,7 +34,7 @@ A modern marketplace platform that connects people who need help with tasks to v
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/KhairnarLokesh/Rent_a_Skill.git
+git clone https://github.com/VishalRaut2106/Rent_a_Skill.git
 cd Rent_a_Skill
 ```
 
